@@ -47,7 +47,6 @@ const App = () => {
             }
         };
 
-        console.log(wallet.chainId)
         getProvider();
 
         return () => {
@@ -107,7 +106,7 @@ const App = () => {
             {wallet.accounts.length > 0 && (
                 <div className={'flex flex-col w-full text-xl'}>
                     <h2>BALANCE:</h2>
-                    <p className={'opacity-70'}>{wallet.balance}</p>
+                    <p className={'opacity-70'}>{wallet.balance}{' ETH'}</p>
                 </div>
             )}
             <div className={'flex w-full justify-between sm:gap-8 gap-2 items-center sm:flex-row flex-col'}>
