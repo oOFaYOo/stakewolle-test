@@ -2,6 +2,8 @@
 
 import {useEffect, useState} from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
+import {Paper, TextField, Button} from "@mui/material";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const App = () => {
 
@@ -26,17 +28,16 @@ const App = () => {
             if (accounts.length > 0) {
                 updateWallet(accounts);
             } else {
-                // if length 0, user is disconnected
                 setWallet(initialState);
             }
         };
 
-        const refreshChain = (chainId: any) => {               /* New */
-            setWallet((wallet) => ({ ...wallet, chainId }));   /* New */
-        };                                                     /* New */
+        const refreshChain = (chainId: any) => {
+            setWallet((wallet) => ({...wallet, chainId}));
+        };
 
         const getProvider = async () => {
-            const provider = await detectEthereumProvider({ silent: true });
+            const provider = await detectEthereumProvider({silent: true});
             setHasProvider(Boolean(provider));
 
             if (provider) {
@@ -45,7 +46,7 @@ const App = () => {
                 });
                 refreshAccounts(accounts);
                 window.ethereum.on("accountsChanged", refreshAccounts);
-                window.ethereum.on("chainChanged", refreshChain); /* New */
+                window.ethereum.on("chainChanged", refreshChain);
             }
         };
 
@@ -62,15 +63,15 @@ const App = () => {
 
     const updateWallet = async (accounts: any) => {
         const balance = formatBalance(
-            await window.ethereum!.request({              /* New */
-                method: "eth_getBalance",                 /* New */
-                params: [accounts[0], "latest"],          /* New */
+            await window.ethereum!.request({
+                method: "eth_getBalance",
+                params: [accounts[0], "latest"],
             })
-        );                                                /* New */
-        const chainId = await window.ethereum!.request({  /* New */
-            method: "eth_chainId",                        /* New */
-        });                                               /* New */
-        setWallet({ accounts, balance, chainId });        /* Updated */
+        );
+        const chainId = await window.ethereum!.request({
+            method: "eth_chainId",
+        });
+        setWallet({accounts, balance, chainId});
     };
 
     const handleConnect = async () => {
@@ -81,21 +82,25 @@ const App = () => {
     };
 
     return (
-        <div className="relative bg-amber-400 h-[50vh] flex p-8">
 
-
-            {window.ethereum?.isMetaMask && wallet.accounts.length < 1 && (
-                <button onClick={handleConnect}>Connect MetaMask</button>
-            )}
-
+        <form className="bg-neutral-100/70 shadow-xl justify-evenly items-center rounded-xl h-[50vh] w-[50vw] flex flex-col gap-2 p-4">
+            <div className={'flex flex-col w-full'}>
+                <h2>Account:</h2>
+                <p className={'opacity-50'}>{wallet.accounts[0]}</p>
+            </div>
             {wallet.accounts.length > 0 && (
-                <>                                                    {/* New */}
-                    <div>Wallet Accounts: {wallet.accounts[0]}</div>
-                    <div>Wallet Balance: {wallet.balance}</div>       {/* New */}
-                                                             {/* New */}
-                </>
+                <div className={'flex flex-col w-full text-xl'}>
+                    <h2>BALANCE:</h2>
+                    <p className={'opacity-70'}>{wallet.balance}</p>
+                </div>
             )}
-        </div>
+            <div className={'flex w-full justify-between gap-8 items-center'}>
+                <TextField name={'amount'} fullWidth id="outlined-basic" label="Amount" variant="outlined" required/>
+                <ArrowForwardIcon fontSize={'medium'} className={'bg-[#1976d2] text-white rounded-full'} />
+                <TextField name={'to'} fullWidth id="outlined-basic" label="To" variant="outlined" required/>
+            </div>
+            <Button type={'submit'} className={'w-[100px]'} variant="contained">send</Button>
+        </form>
     );
 };
 
