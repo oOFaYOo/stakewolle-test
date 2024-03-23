@@ -35,11 +35,14 @@ const App = () => {
             const provider = await detectEthereumProvider({silent: true});
 
             if (provider) {
+                // @ts-ignore
                 const accounts = await window.ethereum.request({
                     method: "eth_accounts",
                 });
                 refreshAccounts(accounts);
+                // @ts-ignore
                 window.ethereum.on("accountsChanged", refreshAccounts);
+                // @ts-ignore
                 window.ethereum.on("chainChanged", refreshChain);
             }
         };
@@ -47,7 +50,9 @@ const App = () => {
         getProvider();
 
         return () => {
+            // @ts-ignore
             window.ethereum?.removeListener("accountsChanged", refreshAccounts);
+            // @ts-ignore
             window.ethereum?.removeListener(
                 "chainChanged",
                 refreshChain
@@ -57,11 +62,13 @@ const App = () => {
 
     const updateWallet = async (accounts: any) => {
         const balance = formatBalance(
+            // @ts-ignore
             await window.ethereum!.request({
                 method: "eth_getBalance",
                 params: [accounts[0], "latest"],
             })
         );
+        // @ts-ignore
         const chainId = await window.ethereum!.request({
             method: "eth_chainId",
         });
@@ -69,6 +76,7 @@ const App = () => {
     };
 
     const handleConnect = async () => {
+        // @ts-ignore
         let accounts = await window.ethereum.request({
             method: "eth_requestAccounts",
         });
@@ -83,6 +91,7 @@ const App = () => {
             e.preventDefault();
             const data = new FormData(e.target as HTMLFormElement);
             data.set('from', `${wallet.accounts[0]}`);
+            // @ts-ignore
             await window.ethereum.request({
                 "method": "eth_sendTransaction",
                 "params": [Object.fromEntries(data)]
