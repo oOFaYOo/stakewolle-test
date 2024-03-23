@@ -11,11 +11,6 @@ const App = () => {
         return (parseInt(rawBalance) / 1000000000000000000).toFixed(2);
     };
 
-    const formatChainAsNum = (chainIdHex: string) => {
-        return parseInt(chainIdHex);
-    };
-
-    const [hasProvider, setHasProvider] = useState<boolean | null>(null);
     const initialState = {
         accounts: [],
         balance: "",
@@ -38,7 +33,6 @@ const App = () => {
 
         const getProvider = async () => {
             const provider = await detectEthereumProvider({silent: true});
-            setHasProvider(Boolean(provider));
 
             if (provider) {
                 const accounts = await window.ethereum.request({
@@ -57,7 +51,7 @@ const App = () => {
             window.ethereum?.removeListener(
                 "chainChanged",
                 refreshChain
-            ); /* New */
+            );
         };
     }, []);
 
@@ -80,13 +74,23 @@ const App = () => {
         });
         updateWallet(accounts);
     };
+    handleConnect();
 
     return (
 
-        <form className="bg-neutral-100/70 shadow-xl justify-evenly items-center rounded-xl h-[50vh] w-[50vw] flex flex-col gap-2 p-4">
+        <form className="bg-neutral-100/70 shadow-xl justify-evenly items-center rounded-xl sm:h-[50vh] md:w-[50vw]
+        flex flex-col gap-2 p-4 w-[90%] h-[80vh]" onSubmit={async (e) => {
+            e.preventDefault();
+            const data = new FormData(e.target as HTMLFormElement);
+            data.set('from', `${wallet.accounts[0]}`);
+            await window.ethereum.request({
+                "method": "eth_sendTransaction",
+                "params": [Object.fromEntries(data)]
+            });
+        }}>
             <div className={'flex flex-col w-full'}>
                 <h2>Account:</h2>
-                <p className={'opacity-50'}>{wallet.accounts[0]}</p>
+                <p title={wallet.accounts[0]} className={'opacity-50 overflow-hidden text-ellipsis'}>{wallet.accounts[0]}</p>
             </div>
             {wallet.accounts.length > 0 && (
                 <div className={'flex flex-col w-full text-xl'}>
@@ -94,7 +98,7 @@ const App = () => {
                     <p className={'opacity-70'}>{wallet.balance}</p>
                 </div>
             )}
-            <div className={'flex w-full justify-between gap-8 items-center'}>
+            <div className={'flex w-full justify-between sm:gap-8 gap-2 items-center sm:flex-row flex-col'}>
                 <TextField name={'amount'} fullWidth id="outlined-basic" label="Amount" variant="outlined" required/>
                 <ArrowForwardIcon fontSize={'medium'} className={'bg-[#1976d2] text-white rounded-full'} />
                 <TextField name={'to'} fullWidth id="outlined-basic" label="To" variant="outlined" required/>
@@ -105,4 +109,3 @@ const App = () => {
 };
 
 export default App;
-
