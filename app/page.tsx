@@ -112,7 +112,7 @@ const App = () => {
                 <ArrowForwardIcon fontSize={'medium'} className={'bg-[#1976d2] text-white rounded-full'} />
                 <TextField name={'to'} fullWidth id="outlined-basic" label="To" variant="outlined" required/>
             </div>
-            <Button type={'submit'} className={'w-[100px]'} variant="contained">send</Button>
+            <Button type={'submit'} className={'w-[100px] bg-[#1976d2]'} variant="contained">send</Button>
         </form>
     );
 };
