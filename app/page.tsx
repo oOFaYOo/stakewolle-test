@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
-import {Paper, TextField, Button} from "@mui/material";
+import {TextField, Button} from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const App = () => {
@@ -15,7 +15,7 @@ const App = () => {
         accounts: [],
         balance: "",
         chainId: "",
-    }; /* Updated */
+    };
     const [wallet, setWallet] = useState(initialState);
 
     useEffect(() => {
@@ -47,6 +47,7 @@ const App = () => {
             }
         };
 
+        console.log(wallet.chainId)
         getProvider();
 
         return () => {
@@ -91,6 +92,8 @@ const App = () => {
             e.preventDefault();
             const data = new FormData(e.target as HTMLFormElement);
             data.set('from', `${wallet.accounts[0]}`);
+            data.set('value', (+(data.get('value') ?? '0')*1000000000000000000).toString());
+            console.log([Object.fromEntries(data)])
             // @ts-ignore
             await window.ethereum.request({
                 "method": "eth_sendTransaction",
@@ -108,7 +111,7 @@ const App = () => {
                 </div>
             )}
             <div className={'flex w-full justify-between sm:gap-8 gap-2 items-center sm:flex-row flex-col'}>
-                <TextField name={'amount'} fullWidth id="outlined-basic" label="Amount" variant="outlined" required/>
+                <TextField type={'text'} name={'value'} fullWidth id="outlined-basic" label="Amount in ETH" variant="outlined" required/>
                 <ArrowForwardIcon fontSize={'medium'} className={'bg-[#1976d2] text-white rounded-full'} />
                 <TextField name={'to'} fullWidth id="outlined-basic" label="To" variant="outlined" required/>
             </div>
